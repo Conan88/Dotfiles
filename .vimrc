@@ -25,6 +25,7 @@ Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'universal-ctags/ctags'
 Plugin 'majutsushi/tagbar'
+Plugin 'christoomey/vim-tmux-navigator'
 
 " add all your plugins here (note older versions of Vundle
 " used Bundle instead of Plugin)
