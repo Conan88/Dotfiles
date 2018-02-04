@@ -23,6 +23,8 @@ Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 Bundle 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'universal-ctags/ctags'
+Plugin 'majutsushi/tagbar'
 
 " add all your plugins here (note older versions of Vundle
 " used Bundle instead of Plugin)
@@ -94,6 +96,8 @@ let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 "Remove all trailing whitespace by pressing F5
 nnoremap <F7> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 
+"Tagbar shortcut
+nmap<F8> :TagbarToggle<CR>
 set nu
 set clipboard=unnamed
 
@@ -101,9 +105,16 @@ set laststatus=2 " Always display the statusline in all windows
 set showtabline=2 " Always display the tabline, even if there is only one tab
 set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 
+"setup path for ctags
+let g:tagbar_ctags_bin="/usr/bin/ctags"
+
 set tabstop=4
 set softtabstop=4
 set autoindent
+set expandtab
+set smartindent
+set nowrap
+set bg=dark
 set is
 set ic
 set hls
