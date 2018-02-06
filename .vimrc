@@ -36,6 +36,9 @@ Plugin 'christoomey/vim-tmux-navigator'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+"eliminating delay when hitting esc
+set timeoutlen=1000 ttimeoutlen=0
+
 "split navigations
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
@@ -46,6 +49,8 @@ nnoremap <C-H> <C-W><C-H>
 set foldmethod=indent
 set foldlevel=99
 
+"map auto format json files
+autocmd FileType json nnoremap <F2> :update<bar>!python -m json.tool %<CR>
 " Enable folding with the spacebar
 nnoremap <space> za
 
