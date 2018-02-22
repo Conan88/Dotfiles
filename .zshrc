@@ -1,8 +1,13 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+  export EDITOR=vim
+  export ANDROID_HOME=/home/christoffer/Android/Sdk
+  PATH=$PATH:$ANDROID_HOME/tools
+  PATH=$PATH:$ANDROID_HOME/platform-tools
+
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/conan/.oh-my-zsh
+  export ZSH=/home/christoffer/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -63,6 +68,7 @@ plugins=(
   extract
   web-search
   vi-mode
+  history-substring-search
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -92,8 +98,20 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 
+# Keybindings for vim keys for smart history
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+
 KEYTIMEOUT=1
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias 'cc=clear'
+alias 'work=/home/christoffer/Dev/Github/Miscellaneous/work.sh'
+alias 'sky=/home/christoffer/Dev/Github/SkynetBachelor'
+
+# zsh
+alias vim="stty stop '' -ixoff ; vim"
+
+# `Frozing' tty, so after any command terminal settings will be restored
+ttyctl -f
