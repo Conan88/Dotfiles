@@ -141,7 +141,7 @@ let g:UltiSnipsJumpForwardTrigger="<c-f>"
 let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 
 " Toggle color schema
-call togglebg#map("<F5>")
+call togglebg#map("<F4>")
 
 " Remove all trailing whitespace by pressing F7
 nnoremap <F7> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>

@@ -1,7 +1,8 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-  export EDITOR=vim
+  export EDITOR=/usr/bin/vim
+  export VISUAL=/usr/bin/vim
   export ANDROID_HOME=/home/christoffer/Android/Sdk
   PATH=$PATH:$ANDROID_HOME/tools
   PATH=$PATH:$ANDROID_HOME/platform-tools
@@ -108,10 +109,21 @@ KEYTIMEOUT=1
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias 'cc=clear'
 alias 'work=/home/christoffer/Dev/Github/Miscellaneous/work.sh'
-alias 'sky=/home/christoffer/Dev/Github/SkynetBachelor'
+alias 'gen=/home/christoffer/Dev/Github/GenderumRevelio'
 
 # zsh
 alias vim="stty stop '' -ixoff ; vim"
 
 # `Frozing' tty, so after any command terminal settings will be restored
 ttyctl -f
+
+# Notes program
+note(){
+    $EDITOR ~/.notes/"$*".note
+}
+getnote(){
+    ls -c ~/.notes/ | grep "$*"
+}
+shownote(){
+    less ~/.notes/"$*".note
+}
