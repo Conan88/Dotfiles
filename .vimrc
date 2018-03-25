@@ -28,6 +28,9 @@ call vundle#begin()
 " Vundle plugin manager
 Plugin 'gmarik/Vundle.vim'
 
+" Autoclose backets
+Plugin 'spf13/vim-autoclose'
+
 " Code folding
 Plugin 'tmhedberg/SimpylFold'
 
@@ -56,7 +59,7 @@ Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'kien/ctrlp.vim'
 
 " Powerline
-Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+"Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 
 " Code completion
 Bundle 'Valloric/YouCompleteMe'
@@ -179,17 +182,19 @@ let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 " /IGNORE'S
 " ---------
 
-" -------
-" Login's
-" -------
+" ------
+" Cursor
+" ------
 
-
-" /Login's
-" --------
+" -------
+" /Cursor
+" -------
 " ----
 " MISC
 " ----
 
+" Indicator for modes
+autocmd InsertEnter,InsertLeave * set cul!
 " Set pdf to standard latex compiler
 "let g:Tex_CompileRule_pdf = 'pdflatex -interaction=nonstopmode $*'
 let g:Tex_DefaultTargetFormat='pdf'
@@ -274,6 +279,12 @@ set foldmethod=indent
 
 " Set foldlevel
 set foldlevel=99
+
+" Enable autoclose brackets
+let g:autoclose_vim_commentmode = 1
+
+" Set relative numers
+set relativenumber
 
 " -----
 " /MISC
