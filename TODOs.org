@@ -8,4 +8,6 @@
 *  tmux.conf 
 *My config for tmx.* 
 
-** TODO clean and comment better
+** TODO'S list
+   
+*** TODO clean and comment better
