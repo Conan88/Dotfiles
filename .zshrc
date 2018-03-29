@@ -110,6 +110,8 @@ KEYTIMEOUT=1
 alias 'cc=clear'
 alias 'work=/home/christoffer/Dev/Github/Miscellaneous/work.sh'
 alias 'gen=/home/christoffer/Dev/Github/GenderumRevelio'
+alias 'emacs=emacs -nw'
+alias 'python=python3'
 
 # zsh
 alias vim="stty stop '' -ixoff ; vim"
