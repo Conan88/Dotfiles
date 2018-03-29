@@ -3,12 +3,12 @@
 
   export EDITOR=/usr/bin/vim
   export VISUAL=/usr/bin/vim
-  export ANDROID_HOME=/home/christoffer/Android/Sdk
+  export ANDROID_HOME=/home/$USER/Android/Sdk
   PATH=$PATH:$ANDROID_HOME/tools
   PATH=$PATH:$ANDROID_HOME/platform-tools
 
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/christoffer/.oh-my-zsh
+  export ZSH=/home/$USER/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -108,8 +108,6 @@ KEYTIMEOUT=1
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias 'cc=clear'
-alias 'work=/home/christoffer/Dev/Github/Miscellaneous/work.sh'
-alias 'gen=/home/christoffer/Dev/Github/GenderumRevelio'
 alias 'emacs=emacs -nw'
 alias 'python=python3'
 
