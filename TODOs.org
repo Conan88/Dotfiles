@@ -1,0 +1,11 @@
+
+*  zshrc 
+*My configs for zsh.* 
+
+*  vimrc
+*My config for vim.*
+
+*  tmux.conf 
+*My config for tmx.* 
+
+**  TODO clean and comment better
