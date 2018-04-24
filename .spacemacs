@@ -30,7 +30,9 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(vimscript
+   '(javascript
+     html
+     vimscript
      python
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -40,17 +42,25 @@ values."
      helm
      auto-completion
      django
-     ;; better-defaults
+     better-defaults
      emacs-lisp
      git
      markdown
      org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
+     (shell :variables
+            shell-default-shell 'multi-term
+            shell-default-height 30
+            shell-default-position 'bottom
+            shell-default-term-shell "usr/bin/zsh")
      spell-checking
      syntax-checking
      ;; version-control
+     imenu-list
+     gtags
+     latex
+     bibtex
+     plantuml
+     graphviz
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -135,7 +145,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+                               :size 16
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -302,10 +312,49 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  (setq org-agenda-files (list "~/org/home.org"
-                              "~/org/school.org"
-                              "~/org/work.org"
-                              "~/org/notes.org"))
+  (setq org-agenda-files (list "~/ownCloud/org/home.org"
+                               "~/ownCloud/org/notes.org"
+                               "~/ownCloud/org/school.org"
+                               "~/ownCloud/org/work.org"
+                               "~/ownCloud/org/programming.org"))
+  (setq-default dotspacemacs-configuration-layers
+                '((spell-checking :variables spell-checking-enable-auto-dictionary t)))
+  (setq projectile-file-exists-local-cache-expire (* 5 60))
+  (setq org-startup-indented t)
+  (defun dotspacemacs/user-config ()
+
+    ; ...
+
+    (defun copy-to-clipboard ()
+      "Copies selection to x-clipboard."
+      (interactive)
+      (if (display-graphic-p)
+          (progn
+            (message "Yanked region to x-clipboard!")
+            (call-interactively 'clipboard-kill-ring-save)
+            )
+        (if (region-active-p)
+            (progn
+              (shell-command-on-region (region-beginning) (region-end) "xsel -i -b")
+              (message "Yanked region to clipboard!")
+              (deactivate-mark))
+          (message "No region active; can't yank to clipboard!")))
+      )
+
+    (defun paste-from-clipboard ()
+      "Pastes from x-clipboard."
+      (interactive)
+      (if (display-graphic-p)
+          (progn
+            (clipboard-yank)
+            (message "graphics active")
+            )
+        (insert (shell-command-to-string "xsel -o -b"))
+        )
+      )
+  (evil-leader/set-key "o y" 'copy-to-clipboard)
+  (evil-leader/set-key "o p" 'paste-from-clipboard)
+)
         )
 
 (defun dotspacemacs/user-config ()
@@ -315,11 +364,13 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (setq-default dotspacemacs-configuration-layers
-                '((org :variables org-projectile-file "~/org/programming.org")))
-  (with-eval-after-load 'org-agenda
-    (require 'org-projectile)
-    (push (org-projectile:todo-files) org-agenda-files))
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((python . t))))
+  (setq org-ref-default-bibliography '("~/Papers/references.bib")
+        org-ref-pdf-directory "~/Papers/"
+        org-ref-bibliography-notes "~/Papers/notes.org")
     )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -350,7 +401,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (vimrc-mode helm-gtags ggtags dactyl-mode counsel-gtags smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub let-alist with-editor auto-dictionary helm-company helm-c-yasnippet fuzzy company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+    (yasnippet-snippets pdf-tools smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub let-alist with-editor auto-dictionary helm-company helm-c-yasnippet fuzzy company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

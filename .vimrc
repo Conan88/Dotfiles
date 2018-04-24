@@ -27,10 +27,13 @@ call vundle#begin()
 
 " Table mode
 Plugin 'dhruvasagar/vim-table-mode'
+
 " Org-mode for vim
 Plugin 'jceb/vim-orgmode'
+
 " Indent guidelines
 Plugin 'Yggdroot/indentLine'
+
 " Vundle plugin manager
 Plugin 'gmarik/Vundle.vim'
 
