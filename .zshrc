@@ -116,7 +116,11 @@ alias vim="stty stop '' -ixoff ; vim"
 
 # `Frozing' tty, so after any command terminal settings will be restored
 ttyctl -f
-eval $(thefuck --alias)
+#eval $(thefuck --alias)
+
+# auto ls after cd
+autoload -U add-zsh-hook
+add-zsh-hook -Uz chpwd(){ ls -a; }
 
 # Notes program
 note(){
