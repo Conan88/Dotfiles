@@ -1,6 +1,12 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+  # virtualenvwrapper variables 
+  export WORKON_HOME=$HOME/.virtualenvs
+  export PROJECT_HOME=$HOME/Devel
+  source /usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh
+  # end virtualenvwrapper variables
+  
   export EDITOR=/usr/bin/vim
   export VISUAL=/usr/bin/vim
   export ANDROID_HOME=/home/$USER/Android/Sdk
@@ -13,7 +19,7 @@
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="bira"
+ZSH_THEME="refined"
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -120,7 +126,7 @@ ttyctl -f
 
 # auto ls after cd
 autoload -U add-zsh-hook
-add-zsh-hook -Uz chpwd(){ ls -a; }
+add-zsh-hook -Uz chpwd(){ ls; }
 
 # Notes program
 note(){
