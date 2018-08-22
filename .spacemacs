@@ -30,14 +30,12 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(ruby
+   '(python
+     ruby
      csv
-     python
-     python
      javascript
      html
      vimscript
-     python
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -66,12 +64,19 @@ values."
      bibtex
      plantuml
      graphviz
+     c-c++
+     semantic
+     rcirc
+     (org :variables org-enable-reveal-js-support t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(realgud
+                                      realgud-pry
+                                      realgud-byebug
+                                      sphinx-doc)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -317,55 +322,28 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (define-coding-system-alias 'UTF-8 'utf-8)
+  (setq org-reveal-root "file:///home/christoffer/reveal.js")
+
+  (setq org-directory "~/ownCloud/org")
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
   (setq org-agenda-files (list "~/ownCloud/org/home.org"
                                "~/ownCloud/org/notes.org"
                                "~/ownCloud/org/school.org"
                                "~/ownCloud/org/work.org"
-                               "~/ownCloud/org/programming.org"))
+                               "~/ownCloud/org/programming.org"
+                               "~/ownCloud/org/nettverksdrift.org"))
   (setq-default dotspacemacs-configuration-layers
                 '((spell-checking :variables enable-flyspell-auto-completion t)))
+  (setq-default dotspacemacs-configuration-layers
+                '((c-c++ :variables c-c++-default-mode-for-headers c++-mode)))
+  (setq-default dotspacemacs-configuration-layers
+                '((c-c++ :variables c-c++-enable-clang-support t)))
+  (setq-default dotspacemacs-configuration-layers
+                '((rcirc :variables rcirc-enable-authinfo-support t)))
   (setq projectile-file-exists-local-cache-expire (* 5 60))
   (setq org-startup-indented t)
-  (defun dotspacemacs/user-config ()
-
-    (defun copy-to-clipboard ()
-      "Copies selection to x-clipboard."
-      (interactive)
-      (if (display-graphic-p)
-          (progn
-            (message "Yanked region to x-clipboard!")
-            (call-interactively 'clipboard-kill-ring-save)
-            )
-        (if (region-active-p)
-            (progn
-              (shell-command-on-region (region-beginning) (region-end) "xsel -i -b")
-              (message "Yanked region to clipboard!")
-              (deactivate-mark))
-          (message "No region active; can't yank to clipboard!")))
-      )
-
-    (defun paste-from-clipboard ()
-      "Pastes from x-clipboard."
-      (interactive)
-      (if (display-graphic-p)
-          (progn
-            (clipboard-yank)
-            (message "graphics active")
-            )
-        (insert (shell-command-to-string "xsel -o -b"))
-        )
-      )
-  (evil-leader/set-key "o y" 'copy-to-clipboard)
-  (evil-leader/set-key "o p" 'paste-from-clipboard)
-
-  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
-  (setq TeX-view-program-list
-        '(("Okular" "okular --unique %o#src:%n`pwd`/./%b")))
-  (setq TeX-view-program-selection
-        '((output-pdf "Okular")))
-)
   )
-
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -373,8 +351,15 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (with-eval-after-load 'python
-    (add-hook 'python-mode-hook (lambda () (setq python-shell-interpreter "ipython3"))))
+  (setq rcirc-server-alist
+        '(("irc.freenode.net"
+           :user "spacemacs_user"
+           :port "1337"
+           :channels ("#emacs"))))
+  (setq org-bullets-bullet-list '("■" "◆" "▲" "▶"))
+  (spaceline-define-segment datetime
+    (shell-command-to-string "echo -n $(date '+%a %d %b %I:%M%p')"))
+  (spaceline-spacemacs-theme 'datetime)
   (with-eval-after-load 'org
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -384,10 +369,49 @@ you should place your code here."
         org-ref-bibliography-notes "~/Papers/notes.org")
   dotspacemacs-configuration-layers '(
                                       (markdown :variables markdown-live-preview-engine 'vmd))
-  (setq ycmd-server-command '("python" "/home/christoffer/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd"))
+  (setq ycmd-server-command '("python" "-u" "/home/christoffer/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd"))
   (setq ycmd-extra-conf-whitelist '("~/Code/*"))
   (setq ycmd-force-semantic-completion t)
+  (add-hook 'c++-mode-hook 'ycmd-mode)
   (add-hook 'python-mode-hook 'ycmd-mode)
+  (add-hook 'python-mode-hook (lambda ()
+                                (require 'sphinx-doc)
+                                (sphinx-doc-mode t)))
+  (defun copy-to-clipboard ()
+    "Copies selection to x-clipboard."
+    (interactive)
+    (if (display-graphic-p)
+      (progn
+        (message "Yanked region to x-clipboard!")
+        (call-interactively 'clipboard-kill-ring-save)
+        )
+    (if (region-active-p)
+        (progn
+          (shell-command-on-region (region-beginning) (region-end) "xsel -i -b")
+          (message "Yanked region to clipboard!")
+          (deactivate-mark))
+      (message "No region active; can't yank to clipboard!")))
+   )
+
+  (defun paste-from-clipboard ()
+    "Pastes from x-clipboard."
+    (interactive)
+    (if (display-graphic-p)
+        (progn
+          (clipboard-yank)
+          (message "graphics active")
+          )
+      (insert (shell-command-to-string "xsel -o -b"))
+      )
+    )
+  (evil-leader/set-key "o y" 'copy-to-clipboard)
+  (evil-leader/set-key "o p" 'paste-from-clipboard)
+
+  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
+  (setq TeX-view-program-list
+        '(("Okular" "okular --unique %o#src:%n`pwd`/./%b")))
+  (setq TeX-view-program-selection
+        '((output-pdf "Okular")))
     )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -416,9 +440,23 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-capture-templates
+   (quote
+    (("i" "Ideas" entry
+      (file+headline "~/ownCloud/org/ideas.org" "Ideas")
+      "" :kill-buffer t)
+     ("c" "Commands" entry
+      (file+headline "~/ownCloud/org/commands.org" "Commands")
+      "" :kill-buffer t)
+     ("w" "Work" entry
+      (file+headline "~/ownCloud/org/work.org" "Remember")
+      "" :kill-buffer t)
+     ("h" "Home" entry
+      (file+headline "~/ownCloud/org/home.org" "Remember")
+      "" :kill-buffer t))))
  '(package-selected-packages
    (quote
-    (editorconfig counsel csv-mode xterm-color web-mode web-beautify vimrc-mode unfill tagedit slim-mode shell-pop scss-mode sass-mode pug-mode pony-mode plantuml-mode org-ref pdf-tools key-chord ivy tablist mwim multi-term livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc imenu-list helm-gtags helm-css-scss helm-bibtex parsebib haml-mode graphviz-dot-mode ggtags eshell-z eshell-prompt-extras esh-help emmet-mode dactyl-mode company-web web-completion-data company-tern tern company-auctex coffee-mode biblio biblio-core auctex smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub let-alist with-editor auto-dictionary helm-company helm-c-yasnippet fuzzy company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+    (seeing-is-believing prettier-js gitignore-templates dotenv-mode csv-mode xterm-color web-mode web-beautify vimrc-mode unfill tagedit slim-mode shell-pop scss-mode sass-mode pug-mode pony-mode plantuml-mode org-ref pdf-tools key-chord ivy tablist mwim multi-term livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc imenu-list helm-gtags helm-css-scss helm-bibtex parsebib haml-mode graphviz-dot-mode ggtags eshell-z eshell-prompt-extras esh-help emmet-mode dactyl-mode company-web web-completion-data company-tern tern company-auctex coffee-mode biblio biblio-core auctex smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub let-alist with-editor auto-dictionary helm-company helm-c-yasnippet fuzzy company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -426,3 +464,5 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  )
 )
+
+
