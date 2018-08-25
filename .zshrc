@@ -138,3 +138,12 @@ getnote(){
 shownote(){
     less ~/.notes/"$*".note
 }
+
+# install and append to a list
+install(){
+for i in $@
+do
+        sudo apt-get install $i
+        echo $i >> ~/Code/GitLab/LinuxSetup/install_list.txt
+done
+}
