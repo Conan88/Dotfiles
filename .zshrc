@@ -6,6 +6,8 @@
   export PROJECT_HOME=$HOME/Devel
   source /usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh
   # end virtualenvwrapper variables
+  # Jboss
+  export JBOSS_HOME=$HOME/Code/GitHub/Wattsight/jboss
   
   export EDITOR=/usr/bin/vim
   export VISUAL=/usr/bin/vim
@@ -106,6 +108,8 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 
 # Keybindings for vim keys for smart history
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 
@@ -114,8 +118,7 @@ KEYTIMEOUT=1
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias 'cc=clear'
-alias 'emacs=emacs -nw'
-alias 'python=python3'
+alias 'emacs=emacsclient -cn'
 
 # zsh
 alias vim="stty stop '' -ixoff ; vim"
@@ -146,4 +149,21 @@ do
         sudo apt-get install $i
         echo $i >> ~/Code/GitLab/LinuxSetup/install_list.txt
 done
+}
+
+# grep history
+hgrep(){
+    history | grep --color=always -i "$@" | less -R
+}
+
+# grep man
+mgrep(){
+    cmd=$1
+    search=$2
+    if [[ $search =~ '^-' ]];
+    then
+            search="\\$search"
+            echo $search
+    fi
+    man $cmd | grep --color=always -i "$search" | less -R
 }
