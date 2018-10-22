@@ -118,7 +118,7 @@ KEYTIMEOUT=1
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias 'cc=clear'
-alias 'emacs=emacsclient -cn'
+#alias 'emacs=emacsclient -cn'
 
 # zsh
 alias vim="stty stop '' -ixoff ; vim"
